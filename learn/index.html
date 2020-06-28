@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <!-- <script src="../src/core/index.js" type="module"></script> -->
+</head>
+
+<body>
+  <div id="app">
+    {{message}}
+  </div>
+  <hr/>
+  <div id="app-2"></div>
+
+  <script type="module" >
+    // import Vue from '../src/core/index.js'
+    const parent = {
+      template: `<div>{{p}}<slot></slot></div>`,
+      name: 'p1',
+      data() {
+        return { p: 'Hello p!' }
+      }
+    }
+    const child = {
+      template: `<div>{{a}}</div>`,
+      name: 'a1',
+      data() {
+        return { a: 'Hello a!' }
+      }
+    }
+    var app = {
+      template: `<div>{{message}}
+        <ca/>
+        </div>`,
+      name: 'app',
+      components: { ca: child },
+      data() {
+        return { message: 'Hello Vue!' }
+      }
+    }
+    // Vue.component(app.name,app)
+    console.log('app: ', new Vue(app).$mount('#app'));
+
+    var app2 = new Vue({
+      el: '#app-2',
+      name:'app-2',
+      components: { helloword: app ,ca: child,p1:parent},
+      template: `<p1>
+        <div >
+        <helloword/>
+        <ca/>
+        <span v-bind:title="message">
+          鼠标悬停几秒钟查看此处动态绑定的提示信息！
+          </span>
+          </div>
+        
+        </p1>`,
+      data: {
+        message: '页面加载于 ' + new Date().toLocaleString()
+      }
+    })
+    console.log('app2: ', app2);
+    console.log('app2.constructor.options: ', app2.constructor.options);
+
+  </script>
+</body>
+
+</html>
