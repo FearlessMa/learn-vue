@@ -5,18 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <!-- <script src="../src/core/index.js" type="module"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+  <script src="../dist/vue.js"></script>
 </head>
 
 <body>
   <div id="app">
     {{message}}
   </div>
-  <hr/>
+  <hr />
   <div id="app-2"></div>
 
-  <script type="module" >
+  <script type="module">
     // import Vue from '../src/core/index.js'
     const parent = {
       template: `<div>{{p}}<slot></slot></div>`,
@@ -40,6 +40,9 @@
       components: { ca: child },
       data() {
         return { message: 'Hello Vue!' }
+      },
+      mounted() {
+        this.$on('hook:mounted', () => { console.log('hook:mounted', this.message) })
       }
     }
     // Vue.component(app.name,app)
@@ -47,8 +50,8 @@
 
     var app2 = new Vue({
       el: '#app-2',
-      name:'app-2',
-      components: { helloword: app ,ca: child,p1:parent},
+      name: 'app-2',
+      components: { helloword: app, ca: child, p1: parent },
       template: `<p1>
         <div >
         <helloword/>

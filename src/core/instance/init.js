@@ -53,7 +53,7 @@ export function initMixin(Vue: Class<Component>) {
     }
     // expose real self 初始化vm
     vm._self = vm;
-    // initLifecycle 主要初始化 下面属性
+    // initLifecycle 主要初始化 下面属性 --绑定初始需要属性
     // vm.$parent = parent
     // vm.$root = parent ? parent.$root : vm
     // vm.$children = []
@@ -65,12 +65,22 @@ export function initMixin(Vue: Class<Component>) {
     // vm._isDestroyed = false
     // vm._isBeingDestroyed = false
     initLifecycle(vm);
-    
+
+    // 更新事件 
+    // _events =  
+    // _hasHookEvent
     initEvents(vm);
-    initRender(vm);
-    callHook(vm, "beforeCreate");
+
+    //挂载 _vnode  _staticTrees $slots createElement  监听$attrs $listeners
+    initRender(vm); 
+    
+    // emit beforeCreate 事件
+    callHook(vm, "beforeCreate"); 
+
     initInjections(vm); // resolve injections before data/props
-    initState(vm);
+    
+    //上面数据合并整合完成 初始化 props methods computed  data watch
+    initState(vm); 
     initProvide(vm); // resolve provide after data/props
     callHook(vm, "created");
 
@@ -81,6 +91,7 @@ export function initMixin(Vue: Class<Component>) {
       measure(`vue ${vm._name} init`, startTag, endTag);
     }
 
+    // 有挂载元素 。vm挂载到元素上
     if (vm.$options.el) {
       vm.$mount(vm.$options.el);
     }

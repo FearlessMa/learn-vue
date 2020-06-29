@@ -15,6 +15,7 @@ export function initEvents (vm: Component) {
   // init parent attached events
   const listeners = vm.$options._parentListeners
   if (listeners) {
+    // 跟新事件
     updateComponentListeners(vm, listeners)
   }
 }
@@ -39,6 +40,7 @@ function createOnceHandler (event, fn) {
   }
 }
 
+// 对比父组件时间监听对象  更新事件监听 
 export function updateComponentListeners (
   vm: Component,
   listeners: Object,

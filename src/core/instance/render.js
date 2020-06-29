@@ -62,6 +62,7 @@ export function renderMixin (Vue: Class<Component>) {
   // install runtime convenience helpers
   installRenderHelpers(Vue.prototype)
 
+  // nextTick  一次判断有那个就使用那个Promise， MutationObserver，setImmediate
   Vue.prototype.$nextTick = function (fn: Function) {
     return nextTick(fn, this)
   }
