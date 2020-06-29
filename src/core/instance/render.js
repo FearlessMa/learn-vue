@@ -32,7 +32,7 @@ export function initRender (vm: Component) {
   // normalization is always applied for the public version, used in
   // user-written render functions.
   vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
-
+ 
   // $attrs & $listeners are exposed for easier HOC creation.
   // they need to be reactive so that HOCs using them are always updated
   const parentData = parentVnode && parentVnode.data
@@ -62,7 +62,6 @@ export function renderMixin (Vue: Class<Component>) {
   // install runtime convenience helpers
   installRenderHelpers(Vue.prototype)
 
-  // nextTick  一次判断有那个就使用那个Promise， MutationObserver，setImmediate
   Vue.prototype.$nextTick = function (fn: Function) {
     return nextTick(fn, this)
   }

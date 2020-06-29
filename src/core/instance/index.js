@@ -20,7 +20,8 @@ stateMixin(Vue);
 eventsMixin(Vue);
 // VUE.prototype 挂载 _update $forceUpdate $destroy
 lifecycleMixin(Vue);
-
+// VUE.prototype 挂载 $nextTick 一次判断 Promise MutationObserver setImmediate 判断成功就使用
+// VUE.prototype 挂载 _render 返回vnode  vm挂再 $vnode= _parentVnode
 renderMixin(Vue);
 
 export default Vue;
