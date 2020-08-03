@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    const app = new Vue({
+      data() { return { msg: 'app' } },
+      props: ['prop1'],
+      on: { click() { console.log('click1') } }, // 未生效
+      render(h) {
+        console.log('h: ', h);
+        console.log('this._c ', this._c);
+        console.log('this.vm ', this.$vm);
+        return h('div', {
+          msg: this.msg,
+          class: 'app',
+          attrs: {
+            id: 'second',
+            title: '测试'
+          },
+          on: { click() { console.log('click2') } }
+        },
+          [
+            this.msg,
+            h(
+              'div',
+              { class: 'child', childName: 'child1', on: {  } },
+              ['child']
+            )
+          ])
+      }
+    }).$mount('#app')
+    console.log('app: ', app);
+  </script>
+</body>
+
+</html>
