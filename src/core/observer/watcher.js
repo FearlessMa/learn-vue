@@ -42,7 +42,80 @@ export default class Watcher {
   getter: Function;
   value: any;
 
-  constructor (
+
+  //   watch :{ dataA:{handler(val){this.dataB +val},deep:true } }
+  //  cb 为watch的回调:handler , options 为其他参数 deep 等
+
+  // export function initState (vm: Component) {
+  //   vm._watchers = []
+  //   const opts = vm.$options
+  //   if (opts.props) initProps(vm, opts.props)
+  //   if (opts.methods) initMethods(vm, opts.methods)
+  //   if (opts.data) {
+  //     initData(vm)
+  //   } else {
+  //     observe(vm._data = {}, true /* asRootData */)
+  //   }
+  //   if (opts.computed) initComputed(vm, opts.computed)
+  //   if (opts.watch && opts.watch !== nativeWatch) {
+  //     initWatch(vm, opts.watch)
+  //   }
+  // }
+
+  // function initWatch (vm: Component, watch: Object) {
+  //   for (const key in watch) {
+  //     const handler = watch[key]
+  //     if (Array.isArray(handler)) {
+  //       for (let i = 0; i < handler.length; i++) {
+  //         createWatcher(vm, key, handler[i])
+  //       }
+  //     } else {
+  //       createWatcher(vm, key, handler)
+  //     }
+  //   }
+  // }
+
+  // function createWatcher (
+  //   vm: Component,
+  //   expOrFn: string | Function,
+  //   handler: any,
+  //   options?: Object
+  // ) {
+  //   if (isPlainObject(handler)) {
+  //     options = handler
+  //     handler = handler.handler
+  //   }
+  //   if (typeof handler === 'string') {
+  //     handler = vm[handler]
+  //   }
+  //   return vm.$watch(expOrFn, handler, options)
+  // }
+
+  // Vue.prototype.$watch = function (
+  //   expOrFn: string | Function,
+  //   cb: any,
+  //   options?: Object
+  // ): Function {
+  //   const vm: Component = this
+  //   if (isPlainObject(cb)) {
+  //     return createWatcher(vm, expOrFn, cb, options)
+  //   }
+  //   options = options || {}
+  //   options.user = true
+  //   const watcher = new Watcher(vm, expOrFn, cb, options)
+  //   if (options.immediate) {
+  //     try {
+  //       cb.call(vm, watcher.value)
+  //     } catch (error) {
+  //       handleError(error, vm, `callback for immediate watcher "${watcher.expression}"`)
+  //     }
+  //   }
+  //   return function unwatchFn () {
+  //     watcher.teardown()
+  //   }
+  // }
+
+  constructor ( 
     vm: Component,
     expOrFn: string | Function,
     cb: Function,
@@ -53,6 +126,7 @@ export default class Watcher {
     if (isRenderWatcher) {
       vm._watcher = this
     }
+    //   vm._watchers = []  src/core/instance/state.js 初始化的_watchers
     vm._watchers.push(this)
     // options
     if (options) {
@@ -76,9 +150,11 @@ export default class Watcher {
       ? expOrFn.toString()
       : ''
     // parse expression for getter
+    //  watch:{ dataA(val){}} ; expOrFn = dataA
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
+      //  解析  expOrFn 为 'a.b.c.d'的情况
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
         this.getter = noop
@@ -90,6 +166,7 @@ export default class Watcher {
         )
       }
     }
+    //  
     this.value = this.lazy
       ? undefined
       : this.get()
@@ -99,10 +176,12 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
+    // Dep.target = this  和   targetStack.push(this)
     pushTarget(this)
     let value
     const vm = this.vm
     try {
+      //   watch :{ dataA:{handler(val){this.dataB +val},deep:true } }
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -116,7 +195,10 @@ export default class Watcher {
       if (this.deep) {
         traverse(value)
       }
+      //  触发所有属性的get  完成依赖收集addDep  后
+      //  修改 Dep.target
       popTarget()
+      //  更新依赖
       this.cleanupDeps()
     }
     return value
@@ -125,12 +207,34 @@ export default class Watcher {
   /**
    * Add a dependency to this directive.
    */
+  //  new Observer 绑定属性
+  //  1. observer 观察属性 定义 __ob__ ， 判断 数组 还是 object 
+  //  2.1 数组  获取数组原生方法为: arrayMethods ，通过Object.defineProperty 绑定 value 为mutator 方法，mutator封装观察变化和通知变化
+  //  2.2 object 给数据的每一项属性转化为响应式，使用 defineReactive 方法
+  //  2.2.1  defineReactive 
+  //  使用observe判断属性值不为基本类型，则为属性值 调用 new Observer  
+  //  为属性 增加 dep依赖实例， 使用 Object.defineProperty定义属性的get，set ，收集，通知依赖
+  
+  //  watcher触发更新过程
+  // dep 是 observer 实例中存储对应 的 dep 实例 
+  //  1. observer 观察一个属性，设置dep 为 new Dep实例 ，
+  //  2. watcher 先设置 Dep.target 为 当前watcher 。在触发 watcher中 被观察属性的 get ，
+  //  get 中调用dep的 depend， depend 中调用 Dep.target.addDep(this); this 为 dep
+  //  3. 当前watcher中的 addDep被调用 获得 被触发get的属性 的 dep 。
+  //  4. 如果是没有收集过的dep ，调用dep.addSub 传递当前watcher 给dep 更新dep.subs  
+  //  5. 如果是 deep 深度监听，使用traverse方法 触发 属性值 中所有 非基本类型数据 被观察属性 的依赖 重复1-4循环
+  //  6. Dep.target 移除，调用 cleanupDeps  更新watcher 中的 newDepIds，newDeps 
+  
+  //  7. 如果当前 属性 被改变 触发 set ， 会调用dep.notify 通知所有在 dep.subs里的 watcher 调用 watcher的 update方法
+  
+  //  总结 watcher  触发 属性 get  传递 属性私有的dep 给watcher.addDep方法
   addDep (dep: Dep) {
     const id = dep.id
     if (!this.newDepIds.has(id)) {
       this.newDepIds.add(id)
       this.newDeps.push(dep)
       if (!this.depIds.has(id)) {
+        //  dep 增加当前 watcher
         dep.addSub(this)
       }
     }
@@ -139,6 +243,7 @@ export default class Watcher {
   /**
    * Clean up for dependency collection.
    */
+  //  更新 依赖
   cleanupDeps () {
     let i = this.deps.length
     while (i--) {
@@ -147,6 +252,10 @@ export default class Watcher {
         dep.removeSub(this)
       }
     }
+    // this.deps = []
+    // this.newDeps = []
+    // this.depIds = new Set()
+    // this.newDepIds = new Set()
     let tmp = this.depIds
     this.depIds = this.newDepIds
     this.newDepIds = tmp
