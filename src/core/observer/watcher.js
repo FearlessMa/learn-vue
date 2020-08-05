@@ -155,6 +155,15 @@ export default class Watcher {
       this.getter = expOrFn
     } else {
       //  解析  expOrFn 为 'a.b.c.d'的情况
+      //  parsePath 返回方法 如下 segments = [a,b,c,d]
+      //  返回 vm.a.b.c.d 的值
+      // function (obj) {
+      //   for (let i = 0; i < segments.length; i++) {
+      //     if (!obj) return
+      //     obj = obj[segments[i]]
+      //   }
+      //   return obj 
+      // }
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
         this.getter = noop
@@ -175,13 +184,18 @@ export default class Watcher {
   /**
    * Evaluate the getter, and re-collect dependencies.
    */
+  //  获取依赖更新后的值 ，计算出 value
   get () {
     // Dep.target = this  和   targetStack.push(this)
     pushTarget(this)
     let value
     const vm = this.vm
     try {
-      //   watch :{ dataA:{handler(val){this.dataB +val},deep:true } }
+      //    getter(vm){ 
+      //      segments = [a,b,c,d] ;    
+      //       递归调用了 a，b, c, d的get
+      //      return vm.a.b.c.d  
+      // }
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -224,7 +238,7 @@ export default class Watcher {
   //  4. 如果是没有收集过的dep ，调用dep.addSub 传递当前watcher 给dep 更新dep.subs  
   //  5. 如果是 deep 深度监听，使用traverse方法 触发 属性值 中所有 非基本类型数据 被观察属性 的依赖 重复1-4循环
   //  6. Dep.target 移除，调用 cleanupDeps  更新watcher 中的 newDepIds，newDeps 
-  
+
   //  7. 如果当前 属性 被改变 触发 set ， 会调用dep.notify 通知所有在 dep.subs里的 watcher 调用 watcher的 update方法
   
   //  总结 watcher  触发 属性 get  传递 属性私有的dep 给watcher.addDep方法
@@ -274,9 +288,10 @@ export default class Watcher {
     /* istanbul ignore else */
     if (this.lazy) {
       this.dirty = true
-    } else if (this.sync) {
+    } else if (this.sync) { // 同步更新
+      //  更新数据 
       this.run()
-    } else {
+    } else { // 异步更新
       queueWatcher(this)
     }
   }
@@ -287,6 +302,7 @@ export default class Watcher {
    */
   run () {
     if (this.active) {
+      //  获取最新的值value
       const value = this.get()
       if (
         value !== this.value ||
@@ -299,6 +315,7 @@ export default class Watcher {
         // set new value
         const oldValue = this.value
         this.value = value
+        //  调用 callback 方法
         if (this.user) {
           try {
             this.cb.call(this.vm, value, oldValue)

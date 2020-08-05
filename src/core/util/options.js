@@ -300,17 +300,24 @@ function normalizeProps (options: Object, vm: ?Component) {
   if (!props) return
   const res = {}
   let i, val, name
+  //  props 为数组
   if (Array.isArray(props)) {
     i = props.length
     while (i--) {
       val = props[i]
       if (typeof val === 'string') {
+//      const camelizeRE = /-(\w)/g
+//      export const camelize = cached((str: string): string => {
+//                    return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
+//       })
+//  通过cached 缓存属性名 与 改 props-id 为 驼峰属性 propsId
         name = camelize(val)
         res[name] = { type: null }
       } else if (process.env.NODE_ENV !== 'production') {
         warn('props must be strings when using array syntax.')
       }
     }
+    //  props 为对象
   } else if (isPlainObject(props)) {
     for (const key in props) {
       val = props[key]
@@ -326,6 +333,7 @@ function normalizeProps (options: Object, vm: ?Component) {
       vm
     )
   }
+  //  统一 设置 props为 对象格式 { name:{type:xxx}}
   options.props = res
 }
 
@@ -385,12 +393,19 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
  */
+//  core/instance/init.js 中调用
+// vm.$options = mergeOptions(
+//   resolveConstructorOptions(vm.constructor),
+//   options || {},
+//   vm
+// );
 export function mergeOptions (
   parent: Object,
   child: Object,
   vm?: Component
 ): Object {
   if (process.env.NODE_ENV !== 'production') {
+    //  检查组件名字  通过遍历 options.components 属性 。 示例components:{compA:comA}
     checkComponents(child)
   }
 
@@ -398,8 +413,11 @@ export function mergeOptions (
     child = child.options
   }
 
+  // 标准化 props 为对象格式 
   normalizeProps(child, vm)
+  //  标准化 inject 为对象
   normalizeInject(child, vm)
+  //      标准化    dirs[key] = { bind: def, update: def }
   normalizeDirectives(child)
 
   // Apply extends and mixins on the child options,
@@ -407,9 +425,11 @@ export function mergeOptions (
   // the result of another mergeOptions call.
   // Only merged options has the _base property.
   if (!child._base) {
+    //  合并extends
     if (child.extends) {
       parent = mergeOptions(parent, child.extends, vm)
     }
+    // 合并 mixins 数组
     if (child.mixins) {
       for (let i = 0, l = child.mixins.length; i < l; i++) {
         parent = mergeOptions(parent, child.mixins[i], vm)

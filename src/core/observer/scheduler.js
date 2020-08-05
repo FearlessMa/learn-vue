@@ -92,6 +92,8 @@ function flushSchedulerQueue () {
     }
     id = watcher.id
     has[id] = null
+
+    //  调用watcher.run  通过get 获取 value 触发依赖收集，调用 cb 返回 新旧 value， 在此过程中如果出现相同 watcher id 被加入has对象，则出现无限循环
     watcher.run()
     // in dev build, check and stop circular updates.
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
@@ -163,6 +165,7 @@ function callActivatedHooks (queue) {
  */
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
+  //  
   if (has[id] == null) {
     has[id] = true
     if (!flushing) {
@@ -170,6 +173,7 @@ export function queueWatcher (watcher: Watcher) {
     } else {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.
+      //  queue 列队 id 从小到大排列 ，因为 watcher.id 是自增的，优先生产的id 小 ，父组件watch id 比子组件id 小
       let i = queue.length - 1
       while (i > index && queue[i].id > watcher.id) {
         i--

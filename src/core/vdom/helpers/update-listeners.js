@@ -33,6 +33,7 @@ const normalizeEvent = cached((name: string): {
   }
 })
 
+//  learn-TODO
 export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component): Function {
   function invoker () {
     const fns = invoker.fns
@@ -49,6 +50,7 @@ export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component
   invoker.fns = fns
   return invoker
 }
+// core/instance/event.js  调用 updateListeners(listeners, oldListeners || {}, add, remove, createOnceHandler, vm)
 
 export function updateListeners (
   on: Object,
@@ -62,6 +64,13 @@ export function updateListeners (
   for (name in on) {
     def = cur = on[name]
     old = oldOn[name]
+    //  normalize 开头方法都是用 缓存 ，并标准化 格式。 normalizeEvent去除事件名 开头的特殊符号,统一返回格式
+    //  event  = {
+    //    name,
+    //    once,
+    //    capture,
+    //    passive
+    //   }
     event = normalizeEvent(name)
     /* istanbul ignore if */
     if (__WEEX__ && isPlainObject(def)) {
