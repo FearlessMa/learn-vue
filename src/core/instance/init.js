@@ -71,8 +71,8 @@ export function initMixin(Vue: Class<Component>) {
     initLifecycle(vm);
 
     // 更新事件
-    // _events =
-    // _hasHookEvent
+    // _events = {}
+    // _hasHookEvent = false
     initEvents(vm);
 
     //挂载 _vnode  _staticTrees $slots createElement  监听$attrs $listeners
@@ -118,6 +118,25 @@ export function initMixin(Vue: Class<Component>) {
           _isMounted : false,
           _isDestroyed : false,
           _isBeingDestroyed :false,
+
+          //      initEvents(vm);
+          _events :{},
+          _hasHookEvent:false,
+
+          //     initRender(vm);
+          _vnode:null,
+          _staticTrees:null,
+          $vnode:vm.$options._parentVnode
+          $slots:null,
+          $scopedSlots:{},
+          _c: createElement,
+          $createElement:createElement,
+          $attrs: vm.$vnode.data.attrs || {},
+          $listeners:vm.$vnode.data._listeners || {},
+
+          // initState(vm)
+          _watchers:[],
+          _props:{}
         };
     */ 
 

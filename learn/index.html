@@ -33,7 +33,7 @@
       }
     }
     var app = {
-      template: `<div>{{message}}
+      template: `<div @click="msgClick" >{{message}}
         <ca/>
         </div>`,
       name: 'app',
@@ -41,38 +41,47 @@
       data() {
         return { message: 'Hello Vue!' }
       },
+      methods: {
+        msgClick() {
+          this.message = Math.random()  
+        }
+      },
       mounted() {
         this.$on('hook:mounted', () => { console.log('hook:mounted', this.message) })
+        this.$on('msg',this.msgClick)
+        this.$emit('msg')
       }
     }
     // Vue.component(app.name,app)
-    console.log('app: ', new Vue(app).$mount('#app'));
+    // console.log('app: ', new Vue(app).$mount('#app'));
 
     var app2 = new Vue({
       el: '#app-2',
       name: 'app-2',
       components: { helloword: app, ca: child, p1: parent },
-      data(){
-        return { name :''}
+      data() {
+        return {
+          name: '', message: '页面加载于 ' + new Date().toLocaleString()
+        }
       },
       template: `<p1>
         <div >
         <helloword/>
         <ca/>
-        <span v-bind:title="message" @click="name='app2'">
+        <span v-bind:title="message" @click="name='app2'" @msg="name='app2'" >
           鼠标悬停几秒钟查看此处动态绑定的提示信息！
           </span>
           </div>
         
         </p1>`,
-      data: {
-        message: '页面加载于 ' + new Date().toLocaleString()
+      mounted() {
+        this.$on('msg', () => { console.log('msg', this.message) })
       }
     })
-    console.log('app2.options: ', app2.options);
-    console.log('app2.$options: ', app2.$options);
-    console.log('app2.$options._parentListeners: ', app2.$options._parentListeners);
-    console.log('app2.constructor.options: ', app2.constructor.options);
+    // console.log('app2.options: ', app2.options);
+    // console.log('app2.$options: ', app2.$options);
+    // console.log('app2.$options._parentListeners: ', app2.$options._parentListeners);
+    // console.log('app2.constructor.options: ', app2.constructor.options);
 
   </script>
 </body>

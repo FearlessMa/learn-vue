@@ -12,16 +12,17 @@ function Vue(options) {
   this._init(options);
 }
 
+//  VUE.prototype._init
 initMixin(Vue);
-// prototype 上挂载 $data $props $set $delete $watch  vm上挂载_watcher _watchers
+// VUE.prototype 上挂载 $data $props $set $delete $watch  
 stateMixin(Vue);
 
-// VUE.prototype 挂载 $on事件，vm上挂载 _events对象 _hasHookEvent是判断是否有hook:开头的事件名称
+// VUE.prototype 挂载 $on ，$off $once $emit
 eventsMixin(Vue);
 // VUE.prototype 挂载 _update $forceUpdate $destroy
 lifecycleMixin(Vue);
-// VUE.prototype 挂载 $nextTick 一次判断 Promise MutationObserver setImmediate 判断成功就使用
-// VUE.prototype 挂载 _render 返回vnode  vm挂再 $vnode= _parentVnode
+// VUE.prototype 挂载 $nextTick 
+// VUE.prototype 挂载 _render 
 renderMixin(Vue);
 
 export default Vue;

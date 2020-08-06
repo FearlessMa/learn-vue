@@ -128,6 +128,7 @@ function initData (vm: Component) {
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+  //  判断 data 的 key 不再 props methods 里 且不是保留的 
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
@@ -148,6 +149,7 @@ function initData (vm: Component) {
       proxy(vm, `_data`, key)
     }
   }
+  //  观察 data
   // observe data
   observe(data, true /* asRootData */)
 }

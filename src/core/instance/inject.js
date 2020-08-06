@@ -16,6 +16,7 @@ export function initProvide (vm: Component) {
 export function initInjections (vm: Component) {
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
+    //  未被观察的数据 不会被 observe 观察  shouldObserve
     toggleObserving(false)
     Object.keys(result).forEach(key => {
       /* istanbul ignore else */

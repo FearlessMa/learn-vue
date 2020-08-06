@@ -25,14 +25,16 @@ const ALWAYS_NORMALIZE = 2
 
 // wrapper function for providing a more flexible interface
 // without getting yelled at by flow
+// createElement(vm, a, b, c, d, true)
 export function createElement (
   context: Component,
-  tag: any,
-  data: any,
-  children: any,
+  tag: any,  // 标签 div JSXComponents 
+  data: any, // 描述属性 VNodeData 
+  children: any, // 子元素 [] 或 字符串
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
+  // 判断 忽略data参数情况 ，例如 createElement(vm, 'div',['这是div'])
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
@@ -51,12 +53,14 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
+  //  没有定义data  且 没定义 data.__ob__
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
       'Always create fresh vnode data objects in each render!',
       context
     )
+    //  new VNode()
     return createEmptyVNode()
   }
   // object syntax in v-bind

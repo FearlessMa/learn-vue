@@ -93,20 +93,23 @@ export function lifecycleMixin (Vue: Class<Component>) {
       vm._watcher.update()
     }
   }
-
+//  移除 绑定事件 ，调用life cycle 钩子 移除 watcher
   Vue.prototype.$destroy = function () {
     const vm: Component = this
     if (vm._isBeingDestroyed) {
       return
     }
+    //  调用 vm 上的 beforeDestroy 事件回调方法
     callHook(vm, 'beforeDestroy')
     vm._isBeingDestroyed = true
     // remove self from parent
+    //  从 父节点 移除 自己 
     const parent = vm.$parent
     if (parent && !parent._isBeingDestroyed && !vm.$options.abstract) {
       remove(parent.$children, vm)
     }
     // teardown watchers
+    //  _watcher 调用 teardown 移除 观察
     if (vm._watcher) {
       vm._watcher.teardown()
     }
@@ -340,6 +343,8 @@ export function callHook (vm: Component, hook: string) {
   const info = `${hook} hook`
   if (handlers) {
     for (let i = 0, j = handlers.length; i < j; i++) {
+      //     res = args ? handler.apply(vm, args) : handler.call(vm)
+      // handlers[i](vm)
       invokeWithErrorHandling(handlers[i], vm, null, vm, info)
     }
   }

@@ -22,7 +22,9 @@ export function initRender (vm: Component) {
   const options = vm.$options
   const parentVnode = vm.$vnode = options._parentVnode // the placeholder node in parent tree
   const renderContext = parentVnode && parentVnode.context
+
   vm.$slots = resolveSlots(options._renderChildren, renderContext)
+  // export const emptyObject = Object.freeze({})
   vm.$scopedSlots = emptyObject
   // bind the createElement fn to this instance
   // so that we get proper render context inside it.
@@ -46,6 +48,7 @@ export function initRender (vm: Component) {
       !isUpdatingChildComponent && warn(`$listeners is readonly.`, vm)
     }, true)
   } else {
+    //  绑定响应式
     defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, null, true)
     defineReactive(vm, '$listeners', options._parentListeners || emptyObject, null, true)
   }

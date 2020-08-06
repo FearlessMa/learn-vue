@@ -33,7 +33,7 @@ const normalizeEvent = cached((name: string): {
   }
 })
 
-//  learn-TODO
+//  返回invoke 方法 绑定了 事件回调方法
 export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component): Function {
   function invoker () {
     const fns = invoker.fns
@@ -47,6 +47,7 @@ export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component
       return invokeWithErrorHandling(fns, null, arguments, vm, `v-on handler`)
     }
   }
+  //  invoker方法设置数据 fns ，内部调用 fns
   invoker.fns = fns
   return invoker
 }
@@ -84,13 +85,16 @@ export function updateListeners (
       )
     } else if (isUndef(old)) {
       if (isUndef(cur.fns)) {
+        //  返回invoke 方法 绑定了 事件回调方法
         cur = on[name] = createFnInvoker(cur, vm)
       }
       if (isTrue(event.once)) {
+        // 创建 once 事件
         cur = on[name] = createOnceHandler(event.name, cur, event.capture)
       }
       add(event.name, cur, event.capture, event.passive, event.params)
     } else if (cur !== old) {
+      //  绑定invoke.fns ， invoke内部调用 invoke.fns
       old.fns = cur
       on[name] = old
     }
