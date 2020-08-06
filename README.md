@@ -2,13 +2,16 @@
 
 # vue 
 
-- src/core/instance/index.js 
-  - 判断 this是不是vue实例 与 初始化options
-    -  this instanceof Vue 判断
-    - this._init(options)  
-  - initMixin(Vue) init.js
-    - [初始化vue](./init.md) 
-  - stateMixin(Vue)
-  - eventsMixin(Vue)
-  - lifecycleMixin(Vue)
-  - renderMixin(Vue)
+
+
+1. Vue 初始化过程 
+2. vm.$mount()挂在过程
+3. Observer,Dep,Watcher,observe 
+4. event 
+5. render 
+6. inject provide
+7. initState
+8. global API
+9. VNode
+10. utils
+
