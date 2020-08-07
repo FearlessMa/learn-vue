@@ -16,7 +16,7 @@ export function initMixin(Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
     // vue 实例
     const vm: Component = this;
-    //
+    //自增uid
     vm._uid = uid++;
     // 测试性能
     let startTag, endTag;
@@ -53,6 +53,7 @@ export function initMixin(Vue: Class<Component>) {
     if (process.env.NODE_ENV !== 'production') {
       initProxy(vm); //检查 是否使用 Proxy
     } else {
+      //  挂在属性
       vm._renderProxy = vm;
     }
     // expose real self 初始化vm

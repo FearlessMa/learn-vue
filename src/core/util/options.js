@@ -405,7 +405,7 @@ export function mergeOptions (
   vm?: Component
 ): Object {
   if (process.env.NODE_ENV !== 'production') {
-    //  检查组件名字  通过遍历 options.components 属性 。 示例components:{compA:comA}
+    //  检查组件名字是否重复  通过遍历 options.components 属性 。 示例components:{compA:comA}
     checkComponents(child)
   }
 

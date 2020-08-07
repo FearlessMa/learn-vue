@@ -5,6 +5,7 @@ import { eventsMixin } from './events';
 import { lifecycleMixin } from './lifecycle';
 import { warn } from '../util/index';
 
+//  Vue构造函数 ，通过插件方式 挂在构造函数所需的 方法
 function Vue(options) {
   if (process.env.NODE_ENV !== 'production' && !(this instanceof Vue)) {
     warn('Vue is a constructor and should be called with the `new` keyword');

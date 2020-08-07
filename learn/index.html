@@ -78,6 +78,9 @@
         this.$on('msg', () => { console.log('msg', this.message) })
       }
     })
+    console.log('app2: constructor', app2.constructor);
+    console.log('app2: constructor.options', app2.constructor.options);
+    console.log('app2: constructor.super', app2.constructor.super);
     // console.log('app2.options: ', app2.options);
     // console.log('app2.$options: ', app2.$options);
     // console.log('app2.$options._parentListeners: ', app2.$options._parentListeners);
