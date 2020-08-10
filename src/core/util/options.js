@@ -413,7 +413,8 @@ export function mergeOptions (
     child = child.options
   }
 
-  // 标准化 props 为对象格式 
+  // 标准化 props 为对象格式    
+  //  统一 设置 props为 对象格式 { name:{type:xxx}}
   normalizeProps(child, vm)
   //  标准化 inject 为对象
   normalizeInject(child, vm)
